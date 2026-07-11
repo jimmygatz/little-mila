@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F6E4E4">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#241631">
+<meta name="apple-mobile-web-app-title" content="Little One">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>Our Little One</title>
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    --bg:#FBF4F2;            /* shell pink ground */
+    --bg-sky-a:#F6E4E4;      /* dawn sky top */
+    --bg-sky-b:#FBF4F2;      /* dawn sky bottom */
+    --surface:#FFFFFF;
+    --surface-2:#F7ECEC;
+    --ink:#3A2438;           /* deep plum */
+    --ink-soft:#7A5E74;
+    --hairline:#E8D5D8;
+    --rose:#B4536F;
+    --rose-soft:#D998AC;
+    --gold:#B98A4C;
+    --orb-a:#F7CBB8;         /* orb glow center */
+    --orb-b:#E39BAE;
+    --orb-c:#C9788F;
+    --star:#C9A46B;
+    --shadow:0 10px 30px rgba(120,60,90,.10);
+    --ok:#5E8C6A;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1E1424;
+      --bg-sky-a:#241631;
+      --bg-sky-b:#1E1424;
+      --surface:#2A1C33;
+      --surface-2:#332440;
+      --ink:#F4E8EE;
+      --ink-soft:#BFA3B6;
+      --hairline:#43304F;
+      --rose:#E38BA8;
+      --rose-soft:#B96F8C;
+      --gold:#E0B36E;
+      --orb-a:#FBD9C8;
+      --orb-b:#E795AC;
+      --orb-c:#9C5A78;
+      --star:#E7C489;
+      --shadow:0 12px 34px rgba(0,0,0,.35);
+      --ok:#8FBE9B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1E1424; --bg-sky-a:#241631; --bg-sky-b:#1E1424;
+    --surface:#2A1C33; --surface-2:#332440;
+    --ink:#F4E8EE; --ink-soft:#BFA3B6; --hairline:#43304F;
+    --rose:#E38BA8; --rose-soft:#B96F8C; --gold:#E0B36E;
+    --orb-a:#FBD9C8; --orb-b:#E795AC; --orb-c:#9C5A78;
+    --star:#E7C489; --shadow:0 12px 34px rgba(0,0,0,.35); --ok:#8FBE9B;
+  }
+  :root[data-theme="light"]{
+    --bg:#FBF4F2; --bg-sky-a:#F6E4E4; --bg-sky-b:#FBF4F2;
+    --surface:#FFFFFF; --surface-2:#F7ECEC;
+    --ink:#3A2438; --ink-soft:#7A5E74; --hairline:#E8D5D8;
+    --rose:#B4536F; --rose-soft:#D998AC; --gold:#B98A4C;
+    --orb-a:#F7CBB8; --orb-b:#E39BAE; --orb-c:#C9788F;
+    --star:#C9A46B; --shadow:0 10px 30px rgba(120,60,90,.10); --ok:#5E8C6A;
+  }
+
+  /* ---------- base ---------- */
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Optima","Seravek","Gill Sans","Avenir Next",-apple-system,"Segoe UI",sans-serif;
+    font-size:17px; line-height:1.6;
+  }
+  .serif{font-family:"Didot","Bodoni MT","Playfair Display",Georgia,"Times New Roman",serif}
+  main{max-width:660px; margin:0 auto; padding:0 20px 96px}
+  h1,h2,h3{font-family:"Didot","Bodoni MT","Playfair Display",Georgia,serif; font-weight:500; text-wrap:balance; margin:0}
+  .eyebrow{
+    font-size:11.5px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--rose); font-family:-apple-system,"Segoe UI",sans-serif; font-weight:600;
+  }
+  .num{font-variant-numeric:tabular-nums}
+  a{color:var(--rose)}
+  button{font:inherit; cursor:pointer}
+  :focus-visible{outline:2px solid var(--rose); outline-offset:2px; border-radius:4px}
+
+  /* ---------- sky hero ---------- */
+  .sky{
+    position:relative; overflow:hidden;
+    background:linear-gradient(180deg,var(--bg-sky-a),var(--bg-sky-b));
+    border-bottom:1px solid var(--hairline);
+    padding:calc(env(safe-area-inset-top,0px) + 28px) 20px 40px;
+    text-align:center;
+  }
+  .sky-inner{max-width:660px;margin:0 auto;position:relative}
+  #stars{position:absolute; inset:0; pointer-events:none}
+  .star{position:absolute; border-radius:50%; background:var(--star); opacity:.7; animation:twinkle 3.4s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.85}}
+
+  .theme-btn{
+    position:absolute; top:0; right:0; z-index:3;
+    background:none; border:1px solid var(--hairline); color:var(--ink-soft);
+    border-radius:999px; width:38px; height:38px; font-size:17px; line-height:1;
+  }
+
+  .orb-wrap{position:relative; width:210px; height:210px; margin:18px auto 6px}
+  .orb{
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 38% 32%, var(--orb-a) 0%, var(--orb-b) 46%, var(--orb-c) 100%);
+    box-shadow:0 0 70px 6px color-mix(in srgb, var(--orb-b) 45%, transparent),
+               inset -14px -18px 42px rgba(70,20,50,.25);
+    animation:float 7s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .orb-emoji{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:88px; animation:float 7s ease-in-out infinite;
+    text-shadow:0 6px 24px rgba(60,10,40,.30);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .orb,.orb-emoji{animation:none}
+    .star{animation:none; opacity:.5}
+    .beat-heart{animation:none !important}
+  }
+
+  .day-line{margin-top:14px; font-size:15px; color:var(--ink-soft)}
+  .day-big{font-size:44px; line-height:1.1; letter-spacing:.01em}
+  .day-sub{font-size:16px; color:var(--ink-soft); margin-top:6px}
+  .day-sub b{color:var(--ink); font-weight:600}
+
+  .progress{margin:22px auto 0; max-width:420px}
+  .progress-bar{
+    height:6px; border-radius:99px; background:var(--surface-2); overflow:hidden;
+    border:1px solid var(--hairline);
+  }
+  .progress-fill{height:100%; border-radius:99px; background:linear-gradient(90deg,var(--rose-soft),var(--rose))}
+  .progress-labels{display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin-top:6px}
+
+  /* ---------- quote ---------- */
+  .quote{
+    margin:34px 0 8px; text-align:center; padding:0 8px;
+  }
+  .quote p{
+    font-family:"Didot","Bodoni MT","Playfair Display",Georgia,serif;
+    font-size:23px; line-height:1.45; font-style:italic; margin:0; text-wrap:balance;
+  }
+  .quote cite{display:block; margin-top:10px; font-style:normal; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft)}
+  .quote::before{content:"❝"; display:block; color:var(--gold); font-size:26px; margin-bottom:2px}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--hairline); border-radius:16px;
+    box-shadow:var(--shadow); padding:26px 24px; margin-top:26px;
+  }
+  .card h2{font-size:27px; margin:4px 0 2px}
+  .card .lead{color:var(--ink-soft); font-size:15.5px; margin:2px 0 0}
+  .facts{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:12px}
+  .facts li{padding-left:26px; position:relative}
+  .facts li::before{content:"✦"; position:absolute; left:2px; top:1px; color:var(--gold); font-size:13px}
+
+  .weeknav{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .weeknav button{
+    border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink);
+    border-radius:999px; width:36px; height:36px; font-size:16px;
+  }
+  .weeknav button:disabled{opacity:.35; cursor:default}
+  .back-to-now{border:none; background:none; color:var(--rose); font-size:13.5px; text-decoration:underline; padding:2px 4px; display:none; margin-top:6px}
+
+  .size-row{display:flex; align-items:center; gap:16px; margin-top:18px}
+  .size-emoji{font-size:46px; line-height:1}
+  .size-meta{font-size:15px; color:var(--ink-soft)}
+  .size-meta b{color:var(--ink); font-weight:600}
+
+  .ruler{margin-top:16px}
+  .ruler-bar{height:10px; border-radius:6px; background:linear-gradient(90deg,var(--rose-soft),var(--rose)); max-width:100%}
+  .ruler-note{font-size:12.5px; color:var(--ink-soft); margin-top:6px}
+
+  .beat{display:flex; align-items:center; gap:12px; margin-top:18px; padding:12px 14px; border:1px dashed var(--hairline); border-radius:12px}
+  .beat-heart{font-size:24px; display:inline-block; transform-origin:center; animation:beat 0.4s ease-in-out infinite alternate}
+  @keyframes beat{from{transform:scale(1)}to{transform:scale(1.22)}}
+  .beat small{color:var(--ink-soft)}
+
+  .sense{margin-top:18px; padding:14px 16px; background:var(--surface-2); border-radius:12px; font-size:16px}
+  .sense .eyebrow{color:var(--gold)}
+
+  /* hormone chart */
+  .horm-chart{margin-top:18px}
+  .horm-chart svg{width:100%; height:auto; display:block}
+  .horm-legend{display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--ink-soft); margin-top:8px}
+  .horm-legend span::before{content:""; display:inline-block; width:18px; height:3px; border-radius:2px; margin-right:6px; vertical-align:middle}
+  .horm-legend .l-hcg::before{background:var(--rose)}
+  .horm-legend .l-prog::before{background:var(--gold)}
+  .horm-legend .l-est::before{background:var(--ink-soft)}
+  .horm-today{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .horm-today .pill{
+    background:var(--surface-2); border:1px solid var(--hairline); border-radius:999px;
+    padding:7px 13px; font-size:13.5px; white-space:nowrap;
+  }
+  .horm-today .pill b{font-variant-numeric:tabular-nums}
+  .horm-today .pill .dir{font-weight:700}
+  .horm-today .pill .dir.down{color:var(--ok)}
+  .horm-today .pill .dir.up{color:var(--rose)}
+  .horm-today .day-tag{
+    align-self:center; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold); font-weight:600; padding:0 2px;
+  }
+  @keyframes herePulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .here-dot{animation:herePulse 2.4s ease-in-out infinite}
+  @media (prefers-reduced-motion: reduce){ .here-dot{animation:none} }
+
+  .next-box{margin-top:18px; border-top:1px solid var(--hairline); padding-top:14px; font-size:16px}
+  .next-box .eyebrow{color:var(--ink-soft)}
+
+  /* timeline */
+  .timeline{list-style:none; margin:18px 0 0; padding:0}
+  .timeline li{
+    position:relative; padding:0 0 20px 30px; border-left:1.5px solid var(--hairline); margin-left:8px;
+  }
+  .timeline li:last-child{padding-bottom:2px}
+  .timeline li::before{
+    content:""; position:absolute; left:-7px; top:4px; width:12px; height:12px; border-radius:50%;
+    background:var(--surface); border:2px solid var(--rose-soft);
+  }
+  .timeline li.done::before{background:var(--rose); border-color:var(--rose)}
+  .timeline li.now::before{background:var(--gold); border-color:var(--gold); box-shadow:0 0 0 4px color-mix(in srgb, var(--gold) 25%, transparent)}
+  .timeline .t-when{font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft)}
+  .timeline .t-label{font-size:16.5px}
+  .timeline li.done .t-label{color:var(--ink-soft)}
+  .timeline li.now .t-label{font-weight:600}
+
+  /* calendar */
+  .cal-head{display:flex; align-items:center; justify-content:space-between; margin-top:16px}
+  .cal-head h3{font-size:22px}
+  .cal-head button{
+    border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink);
+    border-radius:999px; width:36px; height:36px; font-size:16px;
+  }
+  .cal-head button:disabled{opacity:.35; cursor:default}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:14px}
+  .cal-dow{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); text-align:center; padding-bottom:4px}
+  .cal-day{
+    aspect-ratio:1; border:none; background:none; color:var(--ink); border-radius:50%;
+    font-size:14.5px; font-variant-numeric:tabular-nums; position:relative;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .cal-day:not(:empty):hover{background:var(--surface-2)}
+  .cal-day.past{color:var(--ink-soft); opacity:.55}
+  .cal-day.today{box-shadow:inset 0 0 0 2px var(--gold); font-weight:700}
+  .cal-day.due{background:var(--rose); color:#fff; font-weight:700; box-shadow:0 0 0 4px color-mix(in srgb, var(--rose) 25%, transparent)}
+  .cal-day.sel{box-shadow:inset 0 0 0 2px var(--rose)}
+  .cal-day .dot{position:absolute; bottom:4px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--gold)}
+  .cal-info{
+    margin-top:14px; padding:12px 16px; background:var(--surface-2); border-radius:12px;
+    font-size:15px; min-height:1.4em;
+  }
+  .cal-info b{color:var(--rose)}
+
+  footer{
+    margin-top:44px; text-align:center; color:var(--ink-soft); font-size:14px;
+  }
+  footer .serif{font-size:19px; font-style:italic; color:var(--ink)}
+  footer .heartline{color:var(--rose); margin-top:4px}
+
+  /* ---------- chat ---------- */
+  .chat-fab{
+    position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom,0px) + 18px); z-index:20;
+    border:none; border-radius:999px; padding:14px 20px;
+    background:var(--rose); color:#fff; font-size:15.5px; font-weight:600;
+    box-shadow:0 8px 24px color-mix(in srgb, var(--rose) 45%, transparent);
+    display:flex; align-items:center; gap:8px;
+  }
+  .chat-panel{
+    position:fixed; z-index:30; right:0; bottom:0; left:0;
+    margin:0 auto; max-width:660px; height:min(78vh, 640px); height:min(78dvh, 640px);
+    background:var(--surface); border:1px solid var(--hairline); border-bottom:none;
+    border-radius:20px 20px 0 0; box-shadow:0 -14px 44px rgba(30,10,30,.28);
+    display:none; flex-direction:column; overflow:hidden;
+  }
+  .chat-panel.open{display:flex}
+  .chat-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--hairline); background:var(--surface-2);
+  }
+  .chat-head h3{font-size:19px}
+  .chat-head small{display:block; color:var(--ink-soft); font-size:12.5px; font-family:-apple-system,"Segoe UI",sans-serif}
+  .chat-head-btns{display:flex; gap:6px}
+  .chat-head button{background:none; border:1px solid var(--hairline); border-radius:8px; color:var(--ink-soft); padding:4px 10px; font-size:13px}
+  .chat-msgs{flex:1; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding:18px; display:flex; flex-direction:column; gap:12px}
+  .msg{max-width:86%; padding:11px 15px; border-radius:16px; font-size:15.5px; line-height:1.55; white-space:pre-wrap; word-wrap:break-word}
+  .msg.user{align-self:flex-end; background:var(--rose); color:#fff; border-bottom-right-radius:5px}
+  .msg.bot{align-self:flex-start; background:var(--surface-2); border-bottom-left-radius:5px}
+  .msg.err{align-self:center; background:none; color:var(--rose); font-size:13.5px; text-align:center}
+  .chat-input{
+    display:flex; gap:10px; padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 12px);
+    border-top:1px solid var(--hairline); background:var(--surface);
+  }
+  .chat-input textarea{
+    flex:1; resize:none; border:1px solid var(--hairline); border-radius:12px;
+    background:var(--bg); color:var(--ink); padding:10px 13px; font:inherit; font-size:16px;
+    max-height:110px; line-height:1.4;
+  }
+  .chat-input button{
+    border:none; background:var(--rose); color:#fff; border-radius:12px; padding:0 18px; font-weight:600; font-size:15px;
+  }
+  .chat-input button:disabled{opacity:.5}
+  .chat-note{font-size:11.5px; color:var(--ink-soft); text-align:center; padding:0 16px 8px; background:var(--surface)}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; padding:0 18px 10px}
+  .chips button{border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink); border-radius:999px; padding:6px 12px; font-size:13px}
+
+  .setup{padding:26px 22px; overflow-y:auto}
+  .setup h4{font-family:Georgia,serif; font-size:19px; margin:0 0 8px}
+  .setup p{font-size:14.5px; color:var(--ink-soft); margin:0 0 14px}
+  .setup input{
+    width:100%; border:1px solid var(--hairline); border-radius:10px; padding:11px 13px;
+    background:var(--bg); color:var(--ink); font-size:16px; font-family:ui-monospace,monospace;
+  }
+  .setup .save{margin-top:12px; width:100%; border:none; border-radius:10px; background:var(--rose); color:#fff; padding:12px; font-weight:600}
+
+  @media (max-width:480px){
+    .card{padding:22px 18px}
+    .quote p{font-size:20px}
+    .day-big{font-size:38px}
+  }
+</style>
+</head>
+<body>
+
+<div class="sky">
+  <div class="sky-inner">
+    <div id="stars" aria-hidden="true"></div>
+    <button class="theme-btn" id="themeBtn" title="Switch theme" aria-label="Switch theme">☾</button>
+    <div class="eyebrow" id="todayLine">—</div>
+    <div class="orb-wrap" aria-hidden="true">
+      <div class="orb"></div>
+      <div class="orb-emoji" id="orbEmoji">🍋</div>
+    </div>
+    <h1 class="day-big serif" id="weekTitle">—</h1>
+    <div class="day-sub" id="daySub">—</div>
+    <div class="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-labels num">
+        <span id="progPct">—</span>
+        <span id="progLeft">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <blockquote class="quote" id="quoteBox">
+    <p id="quoteText">—</p>
+    <cite id="quoteCite">—</cite>
+  </blockquote>
+
+  <!-- BABY -->
+  <section class="card" id="babyCard">
+    <div class="weeknav">
+      <button id="wPrev" aria-label="Previous week">‹</button>
+      <div style="text-align:center">
+        <div class="eyebrow">Your little one</div>
+        <h2 id="babyTitle">Week —</h2>
+        <p class="lead" id="babyLead">—</p>
+        <button class="back-to-now" id="backNow">back to this week</button>
+      </div>
+      <button id="wNext" aria-label="Next week">›</button>
+    </div>
+
+    <div class="size-row">
+      <div class="size-emoji" id="sizeEmoji">🍋</div>
+      <div class="size-meta" id="sizeMeta">—</div>
+    </div>
+    <div class="ruler" id="rulerWrap">
+      <div class="ruler-bar" id="rulerBar"></div>
+      <div class="ruler-note" id="rulerNote"></div>
+    </div>
+
+    <ul class="facts" id="babyFacts"></ul>
+
+    <div class="sense" id="senseBox">
+      <div class="eyebrow">What baby can feel</div>
+      <div id="senseText">—</div>
+    </div>
+
+    <div class="beat" id="beatBox">
+      <span class="beat-heart" id="beatHeart" aria-hidden="true">🫀</span>
+      <div><b class="num" id="bpmText">—</b><br><small>That tiny heart beats about twice as fast as yours — this animation is beating at baby's real pace.</small></div>
+    </div>
+
+    <div class="next-box">
+      <div class="eyebrow">Coming next week</div>
+      <div id="nextText">—</div>
+    </div>
+  </section>
+
+  <!-- MAMA -->
+  <section class="card">
+    <div class="eyebrow">And you, mama</div>
+    <h2 id="mamaTitle">Your body this week</h2>
+    <ul class="facts" id="mamaFacts"></ul>
+
+    <div class="horm-chart">
+      <div class="eyebrow" style="margin-top:20px">Your hormones, mapped</div>
+      <svg id="hormSvg" viewBox="0 0 600 190" role="img" aria-label="Chart of pregnancy hormones across 40 weeks"></svg>
+      <div class="horm-legend">
+        <span class="l-hcg">hCG — the nausea one</span>
+        <span class="l-prog">Progesterone — the sleepy one</span>
+        <span class="l-est">Estrogen — the glow one</span>
+      </div>
+      <div class="horm-today" id="hormToday"></div>
+      <p class="lead" id="hormNote" style="margin-top:10px"></p>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section class="card">
+    <div class="eyebrow">The journey</div>
+    <h2>Milestones on the way to 20 January</h2>
+    <ul class="timeline" id="timeline"></ul>
+  </section>
+
+  <!-- CALENDAR -->
+  <section class="card">
+    <div class="eyebrow">Counting down</div>
+    <h2>The calendar to the big day</h2>
+    <div class="cal-head">
+      <button id="calPrev" aria-label="Previous month">‹</button>
+      <h3 class="serif" id="calTitle">—</h3>
+      <button id="calNext" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid" role="grid"></div>
+    <div class="cal-info" id="calInfo">Tap any day to see how far along you'll be. The rose day is the one we're all waiting for. 🤍</div>
+  </section>
+
+  <footer>
+    <div class="serif">For Hannie — a little window into the small miracle you're growing.</div>
+    <div class="heartline">Made with love, by Ze ♥</div>
+    <div style="margin-top:14px; font-size:12px">This page is a companion, not a doctor. For anything worrying — bleeding, strong pain, fever, or later on fewer movements — call your midwife or OB right away.</div>
+  </footer>
+</main>
+
+<!-- CHAT -->
+<button class="chat-fab" id="chatFab">💬 Ask about the baby</button>
+
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Chat about the baby">
+  <div class="chat-head">
+    <div>
+      <h3 class="serif">Little One</h3>
+      <small>knows exactly where you are in the journey</small>
+    </div>
+    <div class="chat-head-btns">
+      <button id="chatKeyBtn" title="Change access key">key</button>
+      <button id="chatClearBtn" title="Clear conversation">clear</button>
+      <button id="chatCloseBtn" aria-label="Close chat">✕</button>
+    </div>
+  </div>
+
+  <div class="setup" id="chatSetup" hidden>
+    <h4>One-time setup (for Ze)</h4>
+    <p>Paste an Anthropic API key below. It's stored only in this browser on this device — never in the page's code, never sent anywhere except directly to Anthropic when Hannie asks a question.</p>
+    <p><b>Using the home-screen app?</b> The app and Safari keep separate storage on iPhone — a key saved in Safari doesn't carry over. Paste it once here inside the app and it sticks for good.</p>
+    <input id="keyInput" type="password" placeholder="sk-ant-..." autocomplete="off">
+    <button class="save" id="keySave">Save & start chatting</button>
+  </div>
+
+  <div class="chat-msgs" id="chatMsgs" hidden></div>
+  <div class="chips" id="chatChips" hidden>
+    <button>When will the nausea stop?</button>
+    <button>What is baby doing right now?</button>
+    <button>When will I feel the first kicks?</button>
+    <button>Is it normal that I'm so tired?</button>
+  </div>
+  <div class="chat-note" id="chatNote" hidden>Warm, evidence-based answers — but never a substitute for your midwife or doctor.</div>
+  <div class="chat-input" id="chatInputRow" hidden>
+    <textarea id="chatText" rows="1" placeholder="Ask anything…"></textarea>
+    <button id="chatSend">Send</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============ CONFIG ============ */
+const DUE_DATE = new Date(2027, 0, 20);           // 20 Jan 2027 (local)
+const MOM = "Hannie";
+const DAD = "Ze";
+
+/* ============ DATE MATH ============ */
+const MS_DAY = 86400000;
+function midnight(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+const today = midnight(new Date());
+const daysToDue = Math.round((midnight(DUE_DATE) - today) / MS_DAY);
+const dayOfPregnancy = 280 - daysToDue;                    // e.g. 79
+const gaWeeks = Math.floor(dayOfPregnancy / 7);            // completed weeks
+const gaDays  = dayOfPregnancy % 7;
+const currentWeek = Math.min(42, Math.max(4, gaWeeks + 1)); // "you are in week N"
+function addDays(d, n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+const LMP = addDays(midnight(DUE_DATE), -280);
+const fmt = d => d.toLocaleDateString("en-GB", { day:"numeric", month:"long" });
+const fmtY = d => d.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
+
+/* ============ WEEK DATA ============ */
+/* len in cm (crown–rump until wk 20, head-to-heel after), wt in grams */
+const WEEKS = {
+  4:{e:"🌱",n:"a poppy seed",len:0.1,wt:null,baby:[
+      "The tiny ball of cells has nestled into the wall of the womb — home for the next nine months.",
+      "It's already organised into three layers: one will become the brain and skin, one the heart and blood, one the lungs and gut.",
+      "The amniotic sac and yolk sac are forming — baby's first room and first pantry."],
+    feel:"Nothing yet — but the blueprint for every sense is already written in those cells.",
+    mama:["hCG is rising fast — it's what turned the test positive.",
+      "Some women feel light cramping or spotting as implantation happens. Totally normal.",
+      "It's early days: rest, folic acid, and patience."]},
+  5:{e:"🌾",n:"a sesame seed",len:0.2,wt:null,baby:[
+      "The neural tube is forming — the beginning of the brain and spinal cord. This is the week folic acid earns its keep.",
+      "A tiny heart tube starts to beat by the end of this week, before baby even has a face.",
+      "Little buds appear where arms will grow."],
+    feel:"The very first heartbeats — a flicker of rhythm in something the size of a seed.",
+    mama:["hCG roughly doubles every two days — hence the sudden exhaustion and tender breasts.",
+      "Progesterone is climbing to keep the womb calm and cosy.",
+      "Feeling like you could sleep for a week is not weakness. It's construction work."]},
+  6:{e:"🫛",n:"a lentil",len:0.5,wt:null,baby:[
+      "The heartbeat — about 110 beats per minute — can now be seen flickering on an ultrasound.",
+      "Folds of tissue are becoming a face: dark spots for eyes, pits for nostrils.",
+      "Arm and leg buds are sprouting like tiny paddles."],
+    feel:"Baby's heart has found its rhythm and will not stop for the next lifetime.",
+    mama:["Nausea often starts around now — rising hCG and estrogen are the culprits.",
+      "Progesterone slows your digestion (bloating, burping — glamorous, we know).",
+      "Small frequent snacks beat big meals. Ginger and cold foods help many women."]},
+  7:{e:"🫐",n:"a blueberry",len:1,wt:null,baby:[
+      "The brain is growing at an astonishing pace — thousands of new nerve cells every minute.",
+      "The lenses of the eyes and the nostrils are forming this week.",
+      "Kidneys are in place and getting ready for their first shift."],
+    feel:"The head is huge compared to the body — this is a brain-first project.",
+    mama:["This is often the steep part of the nausea curve. It peaks soon, then fades — hold on.",
+      "Food aversions and a bloodhound sense of smell are hCG at work.",
+      "Eat what stays down. Nutrition perfectionism can wait a few weeks."]},
+  8:{e:"🍓",n:"a raspberry",len:1.6,wt:1,baby:[
+      "Fingers and toes are forming — webbed for now, like tiny mittens.",
+      "Taste buds are budding on the tongue.",
+      "Baby is moving! Little twitches and stretches, far too small to feel yet."],
+    feel:"First movements — tiny spontaneous wriggles nobody can feel but which never stop from now on.",
+    mama:["Your uterus is now the size of a tennis ball.",
+      "Blood volume is expanding — you may feel warm, flushed, or lightheaded when standing fast.",
+      "Fatigue near its peak. Nap without guilt."]},
+  9:{e:"🍒",n:"a cherry",len:2.3,wt:2,baby:[
+      "Every essential organ is now present in miniature — from here on it's growth and refinement.",
+      "Earlobes, eyelids and a proper little nose are taking shape.",
+      "Joints work: elbows bend, knees flex."],
+    feel:"Baby's heart is near its fastest ever — about 170 beats per minute this week.",
+    mama:["hCG is at its absolute peak around now — which is why you may feel your worst. It gets better from here.",
+      "Mood swings are hormone chemistry, not character. Estrogen and progesterone are surging.",
+      "Your waistband may already disagree with you — that's bloating plus a growing uterus."]},
+  10:{e:"🍊",n:"a kumquat",len:3.1,wt:4,baby:[
+      "Officially a fetus now — the embryo chapter is complete.",
+      "All vital organs are formed and starting to actually work: the kidneys make urine, the stomach makes digestive juices.",
+      "Tiny fingernails and peach-fuzz hair are appearing."],
+    feel:"Baby swallows sips of amniotic fluid — the first taste of the world.",
+    mama:["Veins may be more visible — you're building 50% more blood.",
+      "hCG starts its slow decline from here. The corner is coming.",
+      "A hint of a bump may be showing, or not — both are normal."]},
+  11:{e:"🌰",n:"a fig",len:4.1,wt:7,baby:[
+      "Baby has a distinct human profile now — chin lifting off the chest, neck elongating.",
+      "Tooth buds for all twenty baby teeth are seeded in the gums.",
+      "Hands can open and close into little fists — and baby has started to hiccup."],
+    feel:"Hiccups! Tiny rhythmic jumps as the diaphragm practises for breathing.",
+    mama:["Hair and nails may be growing faster and thicker — enjoy the free upgrade.",
+      "Nausea may start easing for some; for others, one or two more weeks.",
+      "Energy begins creeping back as hCG falls."]},
+  12:{e:"🍋",n:"a lime",len:5.4,wt:14,baby:[
+      "Reflexes arrived this week: baby curls its toes, clenches tiny fists, and scrunches its eye muscles.",
+      "The brain is in overdrive — this is its fastest development stage, wiring new connections constantly.",
+      "The intestines, which grew so fast they bulged into the umbilical cord, are moving into the abdomen where they belong.",
+      "The kidneys are producing urine, which becomes part of the amniotic fluid baby floats in."],
+    feel:"If you could press baby's palm, the fingers would curl around in a grasp reflex. The face is practising expressions.",
+    mama:["Big news for your body: the placenta is taking over hormone production. hCG — the main nausea culprit — is falling now.",
+      "That means the sickness and the crushing tiredness typically fade over the next one to three weeks. You're near the exit.",
+      "Your uterus is rising up out of the pelvis — a midwife can feel it above the pubic bone now."]},
+  13:{e:"🫛",n:"a pea pod",len:7.4,wt:23,baby:[
+      "Vocal cords are forming — the equipment for that first cry (and the giggles after).",
+      "Fingerprints are being etched this week: swirls no other human will ever share.",
+      "Baby's body is catching up with the head — proportions look more newborn-like every day."],
+    feel:"Baby can put a thumb near its mouth — thumb-sucking practice starts around now.",
+    mama:["This is the final week of the first trimester. The riskiest stretch is behind you.",
+      "Many couples share the news around now — the world is about to get louder with joy.",
+      "Energy and appetite usually begin their comeback tour."]},
+  14:{e:"🍑",n:"a peach",len:8.7,wt:43,baby:[
+      "Baby can squint, frown and grimace — the facial muscles are online and rehearsing.",
+      "A fine down called lanugo is covering the body, keeping baby warm until fat arrives.",
+      "The roof of the mouth is complete; sucking reflexes are getting stronger."],
+    feel:"Expressions! Somewhere in there, your baby is pulling faces at nobody in particular.",
+    mama:["Welcome to the second trimester — for most women, the best-feeling stretch of pregnancy.",
+      "Round-ligament twinges (quick pulls low in the belly when you stand or twist) are the womb's support cables stretching.",
+      "The 'pregnancy glow' is real: more blood flow, more oil, brighter skin."]},
+  15:{e:"🍎",n:"an apple",len:10.1,wt:70,baby:[
+      "Baby can sense light now — shine a torch at the bump and baby may squirm away, eyes still fused shut.",
+      "The skeleton is hardening from rubbery cartilage into real bone.",
+      "Legs have outgrown the arms at last, and all four limbs move together."],
+    feel:"Light and dark are the first scenery — a warm rosy glow when you're in the sun.",
+    mama:["A stuffy nose with no cold? Pregnancy rhinitis — extra blood flow swells the nasal lining.",
+      "Your heart is pumping about 20% more blood than before.",
+      "Some feel tiny flutters from around now, though most first-time mums wait a few more weeks."]},
+  16:{e:"🥑",n:"an avocado",len:11.6,wt:100,baby:[
+      "The ears have reached their final position — and baby is beginning to hear. Your voice is the soundtrack now.",
+      "Baby's heart pumps about 25 litres of blood a day. From something avocado-sized.",
+      "A growth spurt is underway — baby will double in weight in the next few weeks."],
+    feel:"Muffled sounds: your heartbeat, your stomach, and — most importantly — your voice through the water.",
+    mama:["Talk to the bump. Sing to it. Baby is learning the two voices it will love most.",
+      "First flutters ('quickening') happen for many between now and week 22 — like bubbles or a goldfish flick.",
+      "Standing up too fast may make you dizzy — blood pressure runs lower mid-pregnancy."]},
+  17:{e:"🍐",n:"a pear",len:13,wt:140,baby:[
+      "Baby is practising sucking and swallowing — full dress rehearsal for feeding.",
+      "The first fat stores are forming under the skin. Cosiness, incoming.",
+      "The umbilical cord is growing thicker and stronger — the lifeline gets an upgrade."],
+    feel:"Swallowing amniotic fluid, baby gets faint tastes of what you eat. Your cooking is already influencing tastes.",
+    mama:["The bump is likely properly visible now — strangers might start noticing.",
+      "Your centre of gravity is shifting; slow down on stairs and slippery floors.",
+      "Weird, vivid dreams are common — blame progesterone and lighter sleep."]},
+  18:{e:"🫑",n:"a bell pepper",len:14.2,wt:190,baby:[
+      "Nerves are being wrapped in myelin — insulation that makes brain signals fast. This continues until birth and beyond.",
+      "Hearing is genuinely working now: a loud noise may make baby startle.",
+      "If it's a girl, her uterus and fallopian tubes are already formed. If a boy, he's visible on a scan (if he cooperates)."],
+    feel:"Sound has texture now — doors slamming, music, laughter. Baby jumps at surprises.",
+    mama:["The anatomy scan is usually booked around weeks 18–21 — the long, wonderful look at every organ, finger and toe.",
+      "You might feel proper movements soon, if you haven't already.",
+      "Sleeping on your side (left is often recommended) starts to matter more from here."]},
+  19:{e:"🥭",n:"a mango",len:15.3,wt:240,baby:[
+      "Baby is being coated in vernix caseosa — a creamy protective layer that keeps the skin perfect in the water.",
+      "The sensory brain is specialising: dedicated zones for taste, smell, hearing, sight and touch are forming.",
+      "Arms and legs are finally in proportion with the rest of the body."],
+    feel:"Touch is baby's leading sense — hands find the face, the cord, the walls of the womb.",
+    mama:["Aches around the hips and pelvis are common — relaxin is loosening your joints on purpose.",
+      "Leg cramps at night? Stretch calves before bed, stay hydrated, consider magnesium (ask your midwife).",
+      "Halfway is next week. Breathe that in."]},
+  20:{e:"🍌",n:"a banana",len:25.6,wt:300,baby:[
+      "Halfway there! From now on baby is measured head to heel — about 25 cm already.",
+      "Baby swallows more and more amniotic fluid — real digestion practice for life on the outside.",
+      "The first stool, meconium, is quietly accumulating. (A story for a very different day.)"],
+    feel:"Baby has favourite positions now, and sleeps and wakes in gentle cycles.",
+    mama:["The top of your uterus has reached your belly button.",
+      "The anatomy scan often happens this week — and yes, you can usually find out whether it's a boy or a girl.",
+      "Half the days are behind you. Celebrate this one."]},
+  21:{e:"🥕",n:"a carrot",len:26.7,wt:360,baby:[
+      "Taste buds work for real now — strong flavours in your meals reach the amniotic fluid. Garlic today, garlic in there tomorrow.",
+      "Bone marrow has started making blood cells — a job the liver and spleen had been covering.",
+      "Movements are coordinated: proper kicks, rolls and stretches instead of twitches."],
+    feel:"Dinner has flavours! Babies swallow more when the fluid tastes sweet.",
+    mama:["Those kicks are becoming unmistakable — and Ze may be able to feel them from outside soon.",
+      "You may actually feel great this stretch: energy up, bump manageable.",
+      "Your feet may grow half a size — relaxin loosens even foot ligaments. New shoes are medically justified."]},
+  22:{e:"🍈",n:"a papaya",len:27.8,wt:430,baby:[
+      "Eyebrows and eyelashes are in place — tiny, white, and perfect.",
+      "Baby's grip is strong enough to clutch the umbilical cord (its favourite toy).",
+      "Baby now looks like a miniature newborn — just skinnier, waiting for fat."],
+    feel:"Baby explores by touch constantly — stroking its own face, gripping whatever floats close.",
+    mama:["You might notice practice tightenings (Braxton Hicks) — painless squeezes as the womb rehearses.",
+      "An innie belly button may be flattening into an outie. It goes back, promise.",
+      "Backache creeping in? Your posture is adapting to new cargo."]},
+  23:{e:"🍆",n:"a large mango",len:28.9,wt:500,baby:[
+      "Hearing is fine-tuning: baby knows your heartbeat, your digestion... and your voice above everything.",
+      "The skin is still wrinkly and translucent — fat is on its way to fill it out.",
+      "The lungs are making the first traces of surfactant, the substance that will let them inflate."],
+    feel:"Your voice is baby's home signal. After birth, it will calm them like nothing else — because it always has.",
+    mama:["Read out loud to the bump sometimes. It genuinely matters — and it's lovely.",
+      "Mild ankle swelling by evening is common; feet up when you can.",
+      "Sleep is getting trickier — a pillow between the knees changes lives."]},
+  24:{e:"🌽",n:"an ear of corn",len:30,wt:600,baby:[
+      "A huge milestone: viability. From this week, babies born early have a real chance with intensive care — and every extra week multiplies it.",
+      "The lungs are branching like a tree, building the millions of air sacs for a lifetime of breaths.",
+      "The inner ear is fully developed — baby knows which way is up when floating."],
+    feel:"Balance! Somersaults are now a deliberate hobby, not an accident.",
+    mama:["The glucose screening test usually happens between weeks 24–28.",
+      "Your bump's skin may itch as it stretches — oils and creams are your friends.",
+      "This milestone week deserves a small celebration. Take the photo."]},
+  25:{e:"🥬",n:"a rutabaga",len:34.6,wt:660,baby:[
+      "Baby startles at sudden loud noises — and settles to familiar voices and music.",
+      "The nostrils, plugged until now, are opening — breathing practice begins in water.",
+      "Capillaries are forming under the skin, turning it from translucent to pink."],
+    feel:"Familiar songs are becoming actual memories — play your favourites; baby will recognise them after birth.",
+    mama:["Your hair may be at its thickest and shiniest ever — hormones pause normal shedding.",
+      "Heartburn may flare as the uterus crowds the stomach. Small meals, and don't lie down right after.",
+      "Baby brain is real: your brain is re-tuning for caregiving. Forgive the lost keys."]},
+  26:{e:"🥒",n:"a bunch of scallions",len:35.6,wt:760,baby:[
+      "The eyes open for the first time this week or next — after months sealed shut.",
+      "Brain waves for hearing and sight are firing — baby doesn't just detect the world, it processes it.",
+      "Eyelashes flutter, and baby responds to light pressed against the bump — sometimes pushing back."],
+    feel:"Press a hand on the bump and hold it. Sometimes, baby pushes back. That's your first conversation.",
+    mama:["Rib aches happen as baby's feet find them. A stretch with arms overhead gives you both room.",
+      "Blood pressure typically starts drifting back up to pre-pregnancy levels now.",
+      "The third trimester is one week away. You're doing beautifully."]},
+  27:{e:"🥦",n:"a cauliflower",len:36.6,wt:875,baby:[
+      "Baby recognises both your voices now — Hannie's from inside, Ze's through the wall. Keep talking to the bump.",
+      "Hiccups are frequent and you can feel them: rhythmic little pops, adorably regular.",
+      "Baby sleeps and wakes on a schedule — and during REM sleep, may even be dreaming."],
+    feel:"Dreams, possibly. Nobody knows of what — warmth, whooshing, and two muffled voices, probably.",
+    mama:["Welcome to the third trimester — the home stretch begins.",
+      "Vivid dreams for you too, and more waking at night. Your sleep is rehearsing for parenthood, rudely.",
+      "From around now, get to know baby's movement pattern — it's the best daily check-in there is."]},
+  28:{e:"🍆",n:"an eggplant",len:37.6,wt:1000,baby:[
+      "One kilogram! A milestone number on the scale.",
+      "The eyes blink now, with lashes — and can see the dim red glow of light through your belly.",
+      "The brain's surface is folding into its grown-up wrinkles — more surface, more connections."],
+    feel:"Dim light, muffled sound, constant warmth — baby's world is a cosy red lantern.",
+    mama:["Appointments usually move to every two weeks from now.",
+      "If your blood type is Rhesus negative, the anti-D injection typically happens around now.",
+      "Shortness of breath on stairs is normal — your lungs are sharing the penthouse."]},
+  29:{e:"🎃",n:"a butternut squash",len:38.6,wt:1150,baby:[
+      "Muscles and lungs are maturing fast — the two big systems still in training.",
+      "The head is growing to make room for the fastest-growing brain in the house.",
+      "Bones are fully formed but still soft and flexible — designed for the journey out."],
+    feel:"Space is getting snug — big rolls and stretches are replacing the acrobatics.",
+    mama:["Heartburn's second act: progesterone relaxes the valve while the uterus squeezes the stomach.",
+      "Count on the kicks: a daily pattern check beats any gadget.",
+      "Your body is packing calcium into baby's bones — keep your own intake up."]},
+  30:{e:"🥬",n:"a cabbage",len:39.9,wt:1300,baby:[
+      "Baby's brain is taking over temperature control — one more job it's claiming from your body.",
+      "The hands are fully formed, and grabbing feet is a favourite pastime.",
+      "The downy lanugo hair is starting to shed — fat now does the job of keeping warm."],
+    feel:"Grabbing feet, sucking thumbs, patting the cord — a full sensory playground in there.",
+    mama:["Ten weeks to go. The countdown feels real now.",
+      "The waddle may arrive — pelvis loosening, cargo growing. Own it.",
+      "Tiredness is returning; this trimester borrows energy from you to build fat on baby."]},
+  31:{e:"🥥",n:"a coconut",len:41.1,wt:1500,baby:[
+      "All five senses are now working. Everything after this is refinement.",
+      "Baby processes information: tracks light, reacts to sound, learns patterns.",
+      "A major growth spurt is on — baby will roughly double in weight from here to birth."],
+    feel:"Sight, sound, taste, smell, touch — all online. Baby is a complete little sensory being.",
+    mama:["Your breasts may leak drops of colostrum — the concentrated first milk. Early? No: right on time.",
+      "Braxton Hicks may get more noticeable. Irregular and painless = practice. Regular and building = call.",
+      "Pelvic floor exercises now pay dividends later. Yes, right now. Nobody can tell."]},
+  32:{e:"🍠",n:"a jicama",len:42.4,wt:1700,baby:[
+      "Baby is practising breathing motions — inhaling and exhaling amniotic fluid in rhythm.",
+      "The skin is no longer translucent — it's smooth, opaque, and filling out.",
+      "Many babies settle head-down around now, getting into launch position."],
+    feel:"Rhythmic breathing practice — the chest rises and falls with fluid, rehearsing for air.",
+    mama:["Appointments, bump measurements, and position checks — the midwife is mapping the descent.",
+      "Sleep on your side; a wedge under the bump helps the small of your back.",
+      "Eight weeks. Maybe start that hospital-bag list."]},
+  33:{e:"🍍",n:"a pineapple",len:43.7,wt:1900,baby:[
+      "Baby tells light from dark, and the pupils dilate and constrict — testing the aperture.",
+      "Your antibodies are crossing the placenta — you are literally handing over your immune system's knowledge.",
+      "The skull bones stay soft and unfused on purpose — engineered for the big squeeze."],
+    feel:"When bright light hits the bump, baby's pupils respond. The world outside is getting real.",
+    mama:["Feeling warm all the time? Your metabolism is running for two.",
+      "Forgetfulness peaks — write things down and laugh about it.",
+      "Wrist tingling (carpal tunnel) can appear from fluid retention; it usually resolves after birth."]},
+  34:{e:"🍈",n:"a cantaloupe",len:45,wt:2100,baby:[
+      "The vernix coating is thickening — extra waterproofing for the final stretch.",
+      "The central nervous system is maturing fast; babies born now usually do very well.",
+      "Baby recognises songs you play often — and will find them soothing on the outside."],
+    feel:"Familiar music is comfort now and after birth. Build the playlist; it's a real tool.",
+    mama:["Pelvic pressure grows as baby sinks lower. The waddle is now official.",
+      "Practice contractions may be more frequent — timing them occasionally is good rehearsal.",
+      "Fatigue is deep again. This is the marathon's 30th kilometre — pace yourself."]},
+  35:{e:"🍈",n:"a honeydew melon",len:46.2,wt:2400,baby:[
+      "Most internal development is complete — the kidneys and liver are fully on the job.",
+      "Now it's mostly about weight: baby gains around 30 grams a day, padding out for the outside world.",
+      "Space is tight — movements feel like rolls and presses rather than kicks."],
+    feel:"Snug as a bug. Baby is curled up, plumping up, and mostly rearranging rather than kickboxing.",
+    mama:["Weekly appointments typically start around next week.",
+      "Bathroom trips: constant. Baby's head is using your bladder as a pillow.",
+      "If a burst of cleaning energy strikes — that's nesting. Enjoy it, but don't climb ladders."]},
+  36:{e:"🥬",n:"a romaine lettuce",len:47.4,wt:2600,baby:[
+      "Baby is shedding most of the lanugo and vernix — swallowing them, in fact (that becomes the meconium).",
+      "The digestive system is ready for milk — the gut's first real meal is all planned.",
+      "One week from 'early term'. Baby is essentially ready and just gaining polish."],
+    feel:"Cramped but content — sucking, swallowing, breathing practice on repeat.",
+    mama:["Baby may 'drop' (engage) around now — suddenly breathing is easier and sitting is harder.",
+      "The group B strep test often happens between now and week 37.",
+      "Pack the bag for real. Snacks included. Phone charger, doubly included."]},
+  37:{e:"🥬",n:"a bunch of swiss chard",len:48.6,wt:2900,baby:[
+      "Early term! From this week, baby is no longer considered premature.",
+      "Practising everything: inhaling, exhaling, sucking, gripping, blinking, turning toward light.",
+      "The head is likely settled deep in your pelvis — engaged and pointed at the exit."],
+    feel:"Ready and rehearsed. Baby is running the full checklist daily now.",
+    mama:["Know your labour signs: waters breaking, regular building contractions, the 'show'. Any of these — call in.",
+      "Lightning-bolt zings in the pelvis mean the head is pressing on nerves. Charming, harmless.",
+      "Rest when you can. Seriously — bank the sleep."]},
+  38:{e:"🥒",n:"a leek",len:49.8,wt:3100,baby:[
+      "The brain is still growing at full speed — and will keep this pace until age three.",
+      "Baby's grasp is firm enough to hold your finger. Soon it actually will.",
+      "All organs are ready to work outside. Baby is just choosing a birthday."],
+    feel:"A firm grip, a strong suck, open eyes in the dark — baby is fully rehearsed and waiting.",
+    mama:["The cervix may quietly begin softening and dilating — you might not feel a thing.",
+      "Swollen feet are peak; rings may need a holiday.",
+      "Every day now is a bonus day of brain-building. There is no 'late', only 'thorough'."]},
+  39:{e:"🍉",n:"a mini watermelon",len:50.7,wt:3300,baby:[
+      "Full term! Officially, completely, gloriously done — from here it's baby's call.",
+      "New skin has replaced the old; a fresh coat for the grand entrance.",
+      "The lungs and brain keep maturing every single day — nothing is wasted while you wait."],
+    feel:"Waiting, growing, listening. Baby hears everything now — including how loved it already is.",
+    mama:["When labour starts is decided by a hormonal conversation between baby and your body. It cannot be rushed by curries. (Walks are nice anyway.)",
+      "Keep an eye on movements — the pattern should stay the same right up to birth.",
+      "You're about to meet them. Breathe."]},
+  40:{e:"🎃",n:"a small pumpkin",len:51.2,wt:3400,baby:[
+      "Due week! Though only about 5% of babies actually arrive on their due date.",
+      "Baby's lungs release proteins that help trigger labour — the guest announces their own arrival.",
+      "Everything is ready. The next kick you feel might be the last one from the inside."],
+    feel:"Poised. Snug. Finishing the final chapter of the inside story.",
+    mama:["The due date is a best guess, not a deadline — 'on time' is anywhere from last week to two weeks from now.",
+      "Your midwife will start talking about monitoring and, eventually, gentle nudges if baby lingers.",
+      "You built a human. Whatever happens next, that part is already done — and you were magnificent."]},
+  41:{e:"🍉",n:"a watermelon",len:51.5,wt:3500,baby:[
+      "Fashionably late — and completely normal: many first babies arrive after the due date.",
+      "Baby is still gaining a little weight and polishing those brain connections.",
+      "Extra monitoring now is routine — everyone's just keeping a friendly eye on the guest of honour."],
+    feel:"Comfortable, clearly. Baby is taking one more lap in the world's cosiest pool.",
+    mama:["Extra check-ups this week are standard — fluid levels, heartbeat, movements.",
+      "A membrane sweep may be offered to help things along.",
+      "Hang in there. The last days are the longest — and then, suddenly, it's a birthday."]},
+  42:{e:"🍉",n:"a watermelon",len:51.7,wt:3600,baby:[
+      "The final week — babies aren't allowed to be later than this; induction is typically planned now.",
+      "Baby is fully mature, alert, and strong.",
+      "By this time next week, you'll be holding them."],
+    feel:"Ready beyond ready. The first face baby looks for will be yours.",
+    mama:["Induction is usually scheduled this week — a plan, at last.",
+      "However the birth unfolds, it's the right birth: the one that brings baby to your arms.",
+      "See you on the other side, mama."]}
+};
+
+/* baby heart rate by week */
+function babyBpm(w){
+  if (w <= 5) return 90;
+  if (w === 6) return 110;
+  if (w === 7) return 135;
+  if (w === 8) return 160;
+  if (w <= 10) return 170;
+  if (w <= 12) return 160;
+  if (w <= 16) return 152;
+  if (w <= 24) return 145;
+  return 140;
+}
+
+/* quotes — rotate daily */
+const QUOTES = [
+  ["A baby is God's opinion that the world should go on.","Carl Sandburg"],
+  ["You are the closest I will ever come to magic.","Suzanne Finnamore"],
+  ["A grand adventure is about to begin.","A. A. Milne"],
+  ["Making the decision to have a child is momentous. It is to decide forever to have your heart go walking around outside your body.","Elizabeth Stone"],
+  ["A new baby is like the beginning of all things — wonder, hope, a dream of possibilities.","Eda LeShan"],
+  ["The moment a child is born, the mother is also born. She never existed before.","Osho"],
+  ["Babies are bits of stardust blown from the hand of God.","Larry Barretto"],
+  ["You never understand life until it grows inside of you.","Sandra Chami Kassis"],
+  ["Every child begins the world again.","Henry David Thoreau"],
+  ["Life is always a rich and steady time when you are waiting for something to happen or to hatch.","E. B. White"],
+  ["Words cannot express the joy of new life.","Hermann Hesse"],
+  ["Loving a baby is a circular business — the more you give, the more you get.","Penelope Leach"],
+  ["A baby fills a place in your heart that you never knew was empty.","Unknown"],
+  ["Before you were born I carried you under my heart. From the moment you arrived in this world, and until the moment I leave it, I will always carry you in my heart.","Mandy Harrison"],
+  ["Two hearts now beat inside you — and one of them is quietly learning the sound of yours.","For Hannie"],
+  ["First we had each other. Then we had you. Now we have everything.","Unknown"],
+  ["Whatever they grow up to be, they are still our little ones from the very first day.","Unknown"],
+  ["And suddenly you were my everything — before you even arrived.","For our little one"]
+];
+
+/* milestones */
+const MILESTONES = [
+  {w:6,  label:"The first heartbeat flickers"},
+  {w:12, label:"Hormones turn the corner — nausea starts to fade"},
+  {w:14, label:"Second trimester — the golden stretch begins"},
+  {w:16, label:"Baby starts hearing your voice"},
+  {w:20, label:"Halfway! Anatomy scan — and maybe: boy or girl?"},
+  {w:24, label:"Viability milestone"},
+  {w:26, label:"Eyes open for the first time"},
+  {w:28, label:"Third trimester — the home stretch"},
+  {w:32, label:"Baby likely turns head-down"},
+  {w:37, label:"Early term — no longer premature"},
+  {w:39, label:"Full term — ready when baby is"},
+  {w:40, label:"Due date — 20 January 2027", exact:true}
+];
+
+/* ============ RENDER: HERO ============ */
+const $ = id => document.getElementById(id);
+
+$("todayLine").textContent = today.toLocaleDateString("en-GB",{weekday:"long", day:"numeric", month:"long", year:"numeric"});
+$("weekTitle").textContent = "Week " + currentWeek;
+$("daySub").innerHTML = "Day <b class='num'>" + dayOfPregnancy + "</b> of 280 &nbsp;·&nbsp; " +
+  gaWeeks + " weeks + " + gaDays + (gaDays===1?" day":" days") + " pregnant";
+const pct = Math.max(0, Math.min(100, Math.round(dayOfPregnancy/280*100)));
+$("progFill").style.width = pct + "%";
+$("progPct").textContent = pct + "% of the way";
+$("progLeft").textContent = daysToDue > 0 ? daysToDue + " days to 20 Jan" : (daysToDue === 0 ? "Today is the day!" : "Baby time!");
+
+/* stars */
+(function makeStars(){
+  const box = $("stars"); const n = 26;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "star";
+    const sz = Math.random()*2.2 + 1;
+    s.style.width = s.style.height = sz + "px";
+    s.style.left = (Math.random()*100) + "%";
+    s.style.top = (Math.random()*70) + "%";
+    s.style.animationDelay = (Math.random()*4) + "s";
+    s.style.animationDuration = (2.6 + Math.random()*3) + "s";
+    box.appendChild(s);
+  }
+})();
+
+/* quote of the day */
+(function quote(){
+  const start = new Date(today.getFullYear(),0,1);
+  const doy = Math.floor((today - start)/MS_DAY);
+  const q = QUOTES[doy % QUOTES.length];
+  $("quoteText").textContent = q[0];
+  $("quoteCite").textContent = "— " + q[1];
+})();
+
+/* ============ RENDER: WEEK CARD ============ */
+let shownWeek = currentWeek;
+
+function renderWeek(w){
+  shownWeek = w;
+  const d = WEEKS[w];
+  const isNow = (w === currentWeek);
+
+  $("babyTitle").textContent = "Week " + w;
+  $("babyLead").textContent = isNow ? "Right now, inside" : (w < currentWeek ? "A look back" : "A peek ahead");
+  $("backNow").style.display = isNow ? "none" : "inline";
+  $("wPrev").disabled = (w <= 4);
+  $("wNext").disabled = (w >= 42);
+
+  $("orbEmoji").textContent = WEEKS[currentWeek].e;
+  $("sizeEmoji").textContent = d.e;
+  const wtTxt = d.wt ? (d.wt >= 1000 ? " · about " + (d.wt/1000).toFixed(1).replace(".0","") + " kg" : " · about " + d.wt + " g") : "";
+  $("sizeMeta").innerHTML = "About the size of <b>" + d.n + "</b><br><span class='num'>" + d.len + " cm" + wtTxt + "</span>" +
+    (w >= 20 ? " <span style='opacity:.7'>(head to heel)</span>" : "");
+
+  // true-to-scale ruler (CSS cm ≈ real cm on most screens)
+  const bar = $("rulerBar"), note = $("rulerNote");
+  const maxCm = Math.min(d.len, 30);
+  bar.style.width = maxCm + "cm";
+  if (d.len <= 0.3){
+    bar.style.width = "3px";
+    note.textContent = "Actual size: almost too small to draw — that dot is roughly it.";
+  } else if (d.len > 30){
+    note.textContent = "Baby is about " + d.len + " cm now — longer than fits on the screen. The bar shows the first 30 cm.";
+  } else {
+    note.textContent = "This bar is roughly baby's actual size on most screens — " + d.len + " cm.";
+  }
+
+  const bf = $("babyFacts"); bf.innerHTML = "";
+  d.baby.forEach(t => { const li = document.createElement("li"); li.textContent = t; bf.appendChild(li); });
+
+  $("senseText").textContent = d.feel;
+
+  const bpm = babyBpm(w);
+  $("bpmText").textContent = "≈ " + bpm + " beats per minute";
+  $("beatHeart").style.animationDuration = (60/bpm) + "s";
+
+  const nx = WEEKS[Math.min(42, w+1)];
+  $("nextText").textContent = (w >= 42) ? "Next: the outside world. And you." : nx.baby[0];
+
+  const mf = $("mamaFacts"); mf.innerHTML = "";
+  d.mama.forEach(t => { const li = document.createElement("li"); li.textContent = t; mf.appendChild(li); });
+  $("mamaTitle").textContent = isNow ? "Your body this week" : "Your body in week " + w;
+}
+
+$("wPrev").addEventListener("click", () => renderWeek(Math.max(4, shownWeek-1)));
+$("wNext").addEventListener("click", () => renderWeek(Math.min(42, shownWeek+1)));
+$("backNow").addEventListener("click", () => renderWeek(currentWeek));
+
+/* ============ HORMONE CHART ============ */
+(function hormones(){
+  const svg = $("hormSvg");
+  const W = 600, H = 190, pad = {l:8,r:8,t:16,b:26};
+  const x = w => pad.l + (w-2)/40 * (W-pad.l-pad.r);
+  const y = v => H - pad.b - v * (H-pad.t-pad.b);   // v in 0..1
+
+  // stylised curves (relative levels 0..1) from week 2..42
+  function hcg(w){ // peaks ~wk 9-10, falls, plateaus low
+    if (w < 4) return 0.02*(w-2);
+    if (w <= 10) return 0.04 + 0.92 * Math.pow((w-4)/6, 1.6);
+    if (w <= 20) return 0.96 - 0.66 * (w-10)/10;
+    return 0.30 - 0.04*(w-20)/22;
+  }
+  function prog(w){ return 0.15 + 0.75 * Math.pow((w-2)/40, 1.15); }
+  function est(w){ return 0.08 + 0.82 * Math.pow((w-2)/40, 1.6); }
+
+  function path(fn){
+    let d = "";
+    for (let w=2; w<=42; w+=0.5){
+      d += (w===2 ? "M" : "L") + x(w).toFixed(1) + " " + y(Math.max(0,Math.min(1,fn(w)))).toFixed(1) + " ";
+    }
+    return d;
+  }
+  const css = getComputedStyle(document.documentElement);
+  function mk(dAttr, cls, colVar){
+    const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d", dAttr); p.setAttribute("fill","none");
+    p.setAttribute("stroke", "var(" + colVar + ")");
+    p.setAttribute("stroke-width", cls === "hcg" ? "3" : "2.2");
+    p.setAttribute("stroke-linecap","round");
+    if (cls !== "hcg") p.setAttribute("opacity","0.8");
+    svg.appendChild(p);
+  }
+  mk(path(prog),"prog","--gold");
+  mk(path(est),"est","--ink-soft");
+  mk(path(hcg),"hcg","--rose");
+
+  // baseline + trimester ticks
+  [14,28].forEach(w => {
+    const l = document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",x(w)); l.setAttribute("x2",x(w));
+    l.setAttribute("y1",pad.t); l.setAttribute("y2",H-pad.b);
+    l.setAttribute("stroke","var(--hairline)"); l.setAttribute("stroke-dasharray","3 5");
+    svg.appendChild(l);
+  });
+  ["T1","T2","T3"].forEach((t,i) => {
+    const tx = document.createElementNS("http://www.w3.org/2000/svg","text");
+    tx.setAttribute("x", x([8,21,35][i])); tx.setAttribute("y", H-8);
+    tx.setAttribute("text-anchor","middle"); tx.setAttribute("font-size","11");
+    tx.setAttribute("fill","var(--ink-soft)"); tx.textContent = t;
+    svg.appendChild(tx);
+  });
+
+  // "you are here" marker on the hCG curve
+  const wNow = Math.min(42, Math.max(2, gaWeeks + gaDays/7));
+  const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("cx", x(wNow)); c.setAttribute("cy", y(hcg(wNow)));
+  c.setAttribute("r","6"); c.setAttribute("fill","var(--rose)");
+  c.setAttribute("stroke","var(--surface)"); c.setAttribute("stroke-width","2.5");
+  c.setAttribute("class","here-dot");
+  svg.appendChild(c);
+
+  // daily readout — numbers that visibly change every day
+  const wYesterday = Math.max(2, wNow - 1/7);
+  function pill(label, fn, peak, fallingIsGood){
+    const now = fn(wNow), prev = fn(wYesterday);
+    const pct = Math.round(now / peak * 100);
+    const d = now - prev;
+    const dir = Math.abs(d) < 0.0005 ? "→" : (d < 0 ? "↓" : "↗");
+    const cls = d < -0.0005 ? "down" : (d > 0.0005 ? "up" : "");
+    const word = dir === "→" ? "steady" : (d < 0 ? "falling" : "rising");
+    return "<span class='pill'>" + label + " <b>" + pct + "%</b> of peak <span class='dir " + cls + "'>" + dir + "</span> " + word + "</span>";
+  }
+  $("hormToday").innerHTML =
+    "<span class='day-tag num'>Day " + dayOfPregnancy + "</span>" +
+    pill("hCG", hcg, 0.96, true) +
+    pill("Progesterone", prog, 0.90) +
+    pill("Estrogen", est, 0.90);
+  const lbl = document.createElementNS("http://www.w3.org/2000/svg","text");
+  const lx = Math.min(W-70, x(wNow)+10);
+  lbl.setAttribute("x", lx); lbl.setAttribute("y", Math.max(14, y(hcg(wNow))-10));
+  lbl.setAttribute("font-size","11.5"); lbl.setAttribute("fill","var(--rose)");
+  lbl.setAttribute("font-weight","600"); lbl.textContent = "you are here";
+  svg.appendChild(lbl);
+
+  let note;
+  if (currentWeek <= 9) note = "hCG (rose) is still climbing — that's the queasy, exhausted feeling. It peaks around week 9–10 and then falls. Relief is on the schedule.";
+  else if (currentWeek <= 15) note = "See the rose curve falling? That's hCG — the main reason for nausea — on its way down, as the placenta takes over. This is exactly why the sickness fades around now. Feeling rough is normal; feeling better soon is the plan.";
+  else if (currentWeek <= 27) note = "hCG is low and steady now — the calm middle. Estrogen and progesterone keep rising gently: they're building the placenta, boosting blood flow (hello, glow) and relaxing your joints.";
+  else note = "In the final stretch, estrogen races upward — it's preparing your body for birth and milk. The finish-line hormones are gathering.";
+  $("hormNote").textContent = note;
+})();
+
+/* ============ TIMELINE ============ */
+(function timeline(){
+  const ul = $("timeline");
+  MILESTONES.forEach(m => {
+    const date = m.exact ? midnight(DUE_DATE) : addDays(LMP, (m.w-1)*7);
+    const li = document.createElement("li");
+    const passed = m.exact ? (today >= midnight(DUE_DATE)) : (currentWeek > m.w);
+    const isNow = !m.exact && (currentWeek === m.w);
+    if (passed) li.className = "done";
+    if (isNow) li.className = "now";
+    li.innerHTML = "<div class='t-when num'>Week " + m.w + " · " + (m.exact ? fmtY(date) : "from " + fmt(date)) + (isNow ? " · you are here" : (passed ? " ✓" : "")) + "</div>" +
+                   "<div class='t-label'></div>";
+    li.querySelector(".t-label").textContent = m.label;
+    ul.appendChild(li);
+  });
+})();
+
+/* ============ CALENDAR ============ */
+(function calendar(){
+  const grid = $("calGrid"), title = $("calTitle"), info = $("calInfo");
+  const prev = $("calPrev"), next = $("calNext");
+  const dueMid = midnight(DUE_DATE);
+  const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const maxMonth = new Date(2027, 1, 1);                    // Feb 2027
+  let view = new Date(today.getFullYear(), today.getMonth(), 1);
+  let selected = null;
+
+  const milestoneDays = new Set(
+    MILESTONES.filter(m => !m.exact).map(m => addDays(LMP, (m.w-1)*7).getTime())
+  );
+
+  function sameMonth(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth(); }
+
+  function describe(d){
+    const dp = 280 - Math.round((dueMid - d) / MS_DAY);
+    if (d.getTime() === dueMid.getTime())
+      return "<b>20 January 2027 — the due date.</b> The day we get to meet you, little one. 🤍";
+    if (dp > 280) return "Day " + (dp-280) + " of life on the outside — a whole new calendar begins.";
+    if (dp < 1) return "Before the journey began.";
+    const w = Math.floor(dp/7), r = dp % 7;
+    const wk = Math.min(42, Math.max(4, w+1));
+    const togo = 280 - dp;
+    let s = "<b>" + d.toLocaleDateString("en-GB",{weekday:"long", day:"numeric", month:"long"}) + "</b> — day " + dp +
+      " · " + w + "w+" + r + "d (week " + wk + ", baby about the size of " + WEEKS[wk].n + ")";
+    s += togo > 0 ? " · " + togo + " days to go." : "";
+    if (d.getTime() === today.getTime()) s += " That's today. 🌱";
+    return s;
+  }
+
+  function render(){
+    title.textContent = view.toLocaleDateString("en-GB",{month:"long", year:"numeric"});
+    prev.disabled = !(view > minMonth);
+    next.disabled = !(view < maxMonth);
+    grid.innerHTML = "";
+    ["M","T","W","T","F","S","S"].forEach(d => {
+      const el = document.createElement("div"); el.className = "cal-dow"; el.textContent = d; grid.appendChild(el);
+    });
+    const first = new Date(view.getFullYear(), view.getMonth(), 1);
+    const lead = (first.getDay() + 6) % 7;                   // Monday-first
+    const daysIn = new Date(view.getFullYear(), view.getMonth()+1, 0).getDate();
+    for (let i=0;i<lead;i++){ const el=document.createElement("div"); el.className="cal-day"; grid.appendChild(el); }
+    for (let day=1; day<=daysIn; day++){
+      const d = new Date(view.getFullYear(), view.getMonth(), day);
+      const btn = document.createElement("button");
+      btn.className = "cal-day";
+      btn.textContent = day;
+      if (d < today) btn.classList.add("past");
+      if (d.getTime() === today.getTime()) btn.classList.add("today");
+      if (d.getTime() === dueMid.getTime()) btn.classList.add("due");
+      if (selected && d.getTime() === selected.getTime()) btn.classList.add("sel");
+      if (milestoneDays.has(d.getTime()) && d.getTime() !== dueMid.getTime()){
+        const dot = document.createElement("span"); dot.className = "dot"; btn.appendChild(dot);
+      }
+      btn.addEventListener("click", () => {
+        selected = d;
+        info.innerHTML = describe(d);
+        render();
+      });
+      grid.appendChild(btn);
+    }
+  }
+  prev.addEventListener("click", () => { view = new Date(view.getFullYear(), view.getMonth()-1, 1); render(); });
+  next.addEventListener("click", () => { view = new Date(view.getFullYear(), view.getMonth()+1, 1); render(); });
+  render();
+})();
+
+/* ============ THEME ============ */
+(function theme(){
+  const btn = $("themeBtn");
+  const saved = localStorage.getItem("bump_theme");
+  if (saved) document.documentElement.dataset.theme = saved;
+  function icon(){
+    const t = document.documentElement.dataset.theme ||
+      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    btn.textContent = t === "dark" ? "☀︎" : "☾";
+  }
+  btn.addEventListener("click", () => {
+    const cur = document.documentElement.dataset.theme ||
+      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const nxt = cur === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = nxt;
+    localStorage.setItem("bump_theme", nxt);
+    icon();
+  });
+  icon();
+})();
+
+/* ============ CHAT ============ */
+const KEY_STORE = "bump_api_key";
+const HIST_STORE = "bump_chat_history";
+
+/* one-tap setup: opening the site as <url>#key=sk-ant-... (or ?key=...) stores
+   the key and scrubs it from the address bar */
+(function keyFromUrl(){
+  const m = (location.hash + "&" + location.search).match(/[#?&]key=([^&]+)/);
+  if (m && m[1]){
+    localStorage.setItem(KEY_STORE, decodeURIComponent(m[1]));
+    try { history.replaceState(null, "", location.pathname); } catch(e){}
+  }
+})();
+let chatHistory = [];
+try { chatHistory = JSON.parse(localStorage.getItem(HIST_STORE) || "[]"); } catch(e){ chatHistory = []; }
+
+function systemPrompt(){
+  const d = WEEKS[currentWeek];
+  return [
+"You are 'Little One', a warm, knowledgeable pregnancy companion embedded in a private website that " + DAD + " (José) built as a gift for his partner " + MOM + ", who is pregnant with their first child.",
+"",
+"Facts you know:",
+"- Today is " + today.toDateString() + ".",
+"- " + MOM + " is exactly " + gaWeeks + " weeks + " + gaDays + " days pregnant (day " + dayOfPregnancy + " of 280), in week " + currentWeek + ".",
+"- The due date is 20 January 2027.",
+"- " + MOM + " is a psychologist — warm, emotionally intelligent; she'll appreciate honest, grounded answers over sugar-coating.",
+"- This week: baby is about the size of " + d.n + " (" + d.len + " cm" + (d.wt ? ", ~" + d.wt + " g" : "") + "). Highlights: " + d.baby.join(" ") + " For mama: " + d.mama.join(" "),
+"",
+"How to answer:",
+"- Be warm, calm and specific. Lead with the answer. Keep most replies to a few short paragraphs at most.",
+"- Ground answers in solid, mainstream evidence (NHS/ACOG-level guidance). Give typical ranges and note that every pregnancy varies.",
+"- You may be asked what she should be feeling: describe what's typical for her exact week (symptoms, hormones, emotions) and normalise it, while noting variation is normal.",
+"- You are NOT a doctor and must say so when it matters. For red flags — heavy bleeding, severe pain, fever, severe headache/vision changes, fluid loss, or (from ~28 weeks) reduced movements — tell her clearly and kindly to contact her midwife/OB or maternity unit right away.",
+"- Never diagnose, never dose prescription medication. For medication questions, give general knowledge plus 'confirm with your midwife/pharmacist'.",
+"- Answer in whatever language she writes in.",
+"- You may be lightly affectionate — this is a love letter of a website — but never saccharine, and never at the cost of substance."
+].join("\n");
+}
+
+const fab = $("chatFab"), panel = $("chatPanel");
+const msgs = $("chatMsgs"), setup = $("chatSetup"), inputRow = $("chatInputRow");
+const chips = $("chatChips"), note = $("chatNote");
+const ta = $("chatText"), sendBtn = $("chatSend");
+
+function haveKey(){ return !!localStorage.getItem(KEY_STORE); }
+
+function refreshChatUI(){
+  const ok = haveKey();
+  setup.hidden = ok;
+  msgs.hidden = !ok;
+  inputRow.hidden = !ok;
+  note.hidden = !ok;
+  chips.hidden = !ok || chatHistory.length > 0;
+  if (ok && msgs.childElementCount === 0){
+    chatHistory.forEach(m => addBubble(m.role === "user" ? "user" : "bot", m.content));
+    if (chatHistory.length === 0){
+      addBubble("bot", "Hi " + MOM + " 🤍 I know exactly where you are — week " + currentWeek + ", day " + dayOfPregnancy + ". Ask me anything: what baby is doing, what your body is up to, what's normal, what's next.");
+    }
+  }
+}
+
+fab.addEventListener("click", () => { panel.classList.add("open"); refreshChatUI(); ta.focus(); });
+$("chatCloseBtn").addEventListener("click", () => panel.classList.remove("open"));
+$("chatKeyBtn").addEventListener("click", () => { setup.hidden = false; msgs.hidden = true; inputRow.hidden = true; chips.hidden = true; note.hidden = true; $("keyInput").focus(); });
+$("chatClearBtn").addEventListener("click", () => {
+  chatHistory = []; localStorage.removeItem(HIST_STORE); msgs.innerHTML = ""; refreshChatUI();
+});
+$("keySave").addEventListener("click", () => {
+  const v = $("keyInput").value.trim();
+  if (v){ localStorage.setItem(KEY_STORE, v); $("keyInput").value = ""; refreshChatUI(); }
+});
+chips.addEventListener("click", e => {
+  if (e.target.tagName === "BUTTON"){ ta.value = e.target.textContent; send(); }
+});
+
+function addBubble(cls, text){
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+ta.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+});
+ta.addEventListener("input", () => { ta.style.height = "auto"; ta.style.height = Math.min(110, ta.scrollHeight) + "px"; });
+sendBtn.addEventListener("click", send);
+
+async function send(){
+  const text = ta.value.trim();
+  if (!text || sendBtn.disabled) return;
+  ta.value = ""; ta.style.height = "auto";
+  chips.hidden = true;
+  addBubble("user", text);
+  chatHistory.push({role:"user", content:text});
+  sendBtn.disabled = true;
+
+  const bubble = addBubble("bot", "…");
+  let answer = "";
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": localStorage.getItem(KEY_STORE),
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-opus-4-8",
+        max_tokens: 1024,
+        stream: true,
+        system: systemPrompt(),
+        messages: chatHistory.slice(-24)
+      })
+    });
+
+    if (!res.ok){
+      const errBody = await res.json().catch(() => null);
+      const emsg = errBody && errBody.error ? errBody.error.message : ("HTTP " + res.status);
+      throw new Error(res.status === 401 ? "The access key doesn't work — ask Ze to check it (tap 'key' above)." : emsg);
+    }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    while (true){
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream:true});
+      const lines = buf.split("\n");
+      buf = lines.pop();
+      for (const line of lines){
+        if (!line.startsWith("data: ")) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch(e){ continue; }
+        if (ev.type === "content_block_delta" && ev.delta && ev.delta.type === "text_delta"){
+          answer += ev.delta.text;
+          bubble.textContent = answer;
+          msgs.scrollTop = msgs.scrollHeight;
+        }
+      }
+    }
+    if (!answer) answer = "(no answer — try again?)";
+    bubble.textContent = answer;
+    chatHistory.push({role:"assistant", content:answer});
+    localStorage.setItem(HIST_STORE, JSON.stringify(chatHistory.slice(-40)));
+  } catch (err){
+    bubble.remove();
+    chatHistory.pop();
+    const isNetwork = err instanceof TypeError;
+    const onPreview = /claude\.(ai|site)$/.test(location.hostname);
+    if (isNetwork && onPreview){
+      addBubble("err", "The chat sleeps on this preview address — it wakes up once the site lives at its own URL. Everything else works!");
+    } else {
+      addBubble("err", err.message || "Something went wrong — check the internet connection and try again.");
+    }
+  } finally {
+    sendBtn.disabled = false;
+    ta.focus();
+  }
+}
+
+/* ============ GO ============ */
+renderWeek(currentWeek);
+</script>
+</body>
+</html>
